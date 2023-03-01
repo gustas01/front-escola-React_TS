@@ -1,0 +1,1 @@
+# front-escola-React_TS
