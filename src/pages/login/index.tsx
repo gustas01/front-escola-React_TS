@@ -1,7 +1,7 @@
 import { Container } from "../../styles/GlobalStyles"
 import { Title } from "./styled"
 
-export default function Login(){
+export default function Login(): JSX.Element{
   return (
     <Container>
     <Title isRed={false}>
