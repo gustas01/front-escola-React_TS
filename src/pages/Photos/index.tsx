@@ -1,9 +1,9 @@
 import { Container } from "../../styles/GlobalStyles";
 
-export default function Login(): JSX.Element{
+export default function Photos(): JSX.Element{
   return (
     <Container>
-    <h1>Login</h1>
+    <h1>Photos</h1>
     </Container>
   )
 }
