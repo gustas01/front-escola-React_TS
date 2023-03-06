@@ -18,3 +18,8 @@ export default function MyRoute({isClosed, children }: MyProps){
 MyRoute.defaultProps = {
   isClosed: false
 }
+
+// import { useLocation } from 'react-router-dom';
+// const location2 = useLocation()
+// console.log(location2.pathname); //endereço sem a baseURL
+// console.log(window.location.href); //endereço todo
