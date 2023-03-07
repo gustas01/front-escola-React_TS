@@ -13,7 +13,7 @@ export default createGlobalStyle`
   body {
     font-family: sans-serif;
     background-color: ${colors.primaryDarkColor};
-    color: ${colors.primaryColor};
+    color: ${colors.primaryDarkColor};
   }
 
   html, body, #root {
@@ -52,7 +52,7 @@ export default createGlobalStyle`
 
 
 export const Container = styled.section`
-  max-width: 360px;
+  max-width: 480px;
   background-color: #fff;
   margin: 30px auto;
   padding: 30px;
