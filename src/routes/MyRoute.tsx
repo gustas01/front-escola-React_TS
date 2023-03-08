@@ -1,16 +1,21 @@
+import { useSelector } from 'react-redux';
 import { Navigate } from 'react-router-dom';
+import { RootState } from '../store';
 
 interface MyProps {
   isClosed?: boolean,
   children: JSX.Element | JSX.Element[];
-
 }
 
+
+
 export default function MyRoute({isClosed, children }: MyProps){
-  const isLoggedIn = false;
+  const loginInformation = useSelector((state: RootState) => state.loggedInReducer)
+  
+  const isLoggedIn = loginInformation.isLoggedIn;
 
   if(isClosed && !isLoggedIn){    
-    return <Navigate to='/login' state={{prevPath: window.location.href}}/>
+    return <Navigate to='/login' />
   }
   return <>{children}</>
 }

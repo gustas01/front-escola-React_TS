@@ -49,7 +49,6 @@ export default function Register(): JSX.Element{
       
     }catch(e: any){
       const errors = (e.response?.data?.errors) || [];
-      
       errors.map((error: any) => toast.error(error))
     }
 

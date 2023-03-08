@@ -1,34 +1,81 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { toast } from 'react-toastify';
 import axios from '../services/axios';
 import { AppDispatch, AppThunk } from './index';
 
-const initialState: any[] = []
+
+type IState = {
+  isLoggedIn: boolean,
+  token: string,
+  user: {id: number, email: string},
+  isLoading: boolean
+}
+
+type IPayloadAction = {
+  token: string,
+  user: {id: number, email: string}
+}
+
+
+const initialState: IState = {
+  isLoggedIn: false,
+  token: '',
+  user: {id: 0, email: ''},
+  isLoading: false
+}
 
 export const loggedIn = createSlice({
-  name: 'stock',
+  name: 'login',
   initialState: initialState,
   reducers: {
-    increment() {
-
+    loginRequest(state, action: PayloadAction<IPayloadAction>) {
+      return state
     }, 
-    drecrement(){
 
+    loginSuccess(state, action: PayloadAction<IPayloadAction>) {
+      state.token = action.payload.token
+      state.user = action.payload.user
+      state.isLoggedIn = true
+      
+      localStorage.setItem('loggedInState', JSON.stringify(state))
+      return state
+    }, 
+
+    loginFailure(){
+      return initialState
     }
   }
 })
 
 
-export const { increment, drecrement } = loggedIn.actions
+export const { loginRequest, loginSuccess, loginFailure } = loggedIn.actions
 export default loggedIn.reducer
+
 
 
 //disparar action de forma assíncrona
 //provavelmente vou usar algo assim para carregar dados do usuário quando ele clicar no botão de login
-//vou fazer aqui dentro o que for feito no SAGA no curso
-export function loadDataWhenLogin(): AppThunk {
+//vou fazer aqui dentro o que for feito no SAGA
+export function login(payload: {email: string, password: string}): AppThunk {
   return async function (dispatch: AppDispatch, getState){
-    await axios.get('/students')
-    dispatch(increment())
+    try{
+      const response = await axios.post('/tokens', payload, {headers: {'Content-Type': 'application/json'}})
+      dispatch(loginSuccess(response.data))
+      toast.success('Login com sucesso')
+      
+      axios.defaults.headers.Authorization = `Bearer ${response.data.token}`
+    }catch(e){
+      toast.error('Usuário ou senha inválidos')
+      dispatch(loginFailure())
+    }
+  }
+}
+
+export const loadStateWhenStarts = () => {
+  if(localStorage.getItem('loggedInState')){
+    const state = JSON.parse(localStorage.getItem('loggedInState') || '') as IState
+    axios.defaults.headers.Authorization = `Bearer ${state.token}`
+    return state
   }
 }
 
@@ -36,5 +83,5 @@ export function loadDataWhenLogin(): AppThunk {
 //2ª forma de fazer - depois testar se dessa forma funciona também
 // export const loadDataWhenLogin2 = createAsyncThunk('asyncIncrement',
 //   async function(dispatch: AppDispatch, getState){
-//     dispatch(increment())
+//     return dispatch(loginRequest(payload))
 // })

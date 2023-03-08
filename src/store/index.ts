@@ -1,10 +1,11 @@
 import { Action, configureStore, ThunkAction } from "@reduxjs/toolkit";
-import loggedInReducer from "./isLoggedIn.store";
+import loggedInReducer, { loadStateWhenStarts } from "./isLoggedIn.store";
 
 export const store = configureStore({
   reducer: {
     loggedInReducer
-  }
+  },
+  preloadedState: {loggedInReducer: loadStateWhenStarts()}
 })
 
 export type RootState = ReturnType<typeof store.getState>;
