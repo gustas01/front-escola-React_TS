@@ -1,7 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { toast } from 'react-toastify';
 import axios from '../services/axios';
-import { AppDispatch, AppThunk } from './index';
 
 
 type IState = {
@@ -42,6 +40,8 @@ export const loggedIn = createSlice({
     }, 
 
     loginFailure(){
+      localStorage.setItem('loggedInState', JSON.stringify(initialState))
+      delete axios.defaults.headers.Authorization;
       return initialState
     }
   }
@@ -56,20 +56,20 @@ export default loggedIn.reducer
 //disparar action de forma assíncrona
 //provavelmente vou usar algo assim para carregar dados do usuário quando ele clicar no botão de login
 //vou fazer aqui dentro o que for feito no SAGA
-export function login(payload: {email: string, password: string}): AppThunk {
-  return async function (dispatch: AppDispatch, getState){
-    try{
-      const response = await axios.post('/tokens', payload, {headers: {'Content-Type': 'application/json'}})
-      dispatch(loginSuccess(response.data))
-      toast.success('Login com sucesso')
+// export function login(payload: {email: string, password: string}): AppThunk {
+//   return async function (dispatch: AppDispatch, getState){
+//     try{
+//       const response = await axios.post('/tokens', payload, {headers: {'Content-Type': 'application/json'}})
+//       dispatch(loginSuccess(response.data))
+//       toast.success('Login com sucesso')
       
-      axios.defaults.headers.Authorization = `Bearer ${response.data.token}`
-    }catch(e){
-      toast.error('Usuário ou senha inválidos')
-      dispatch(loginFailure())
-    }
-  }
-}
+//       axios.defaults.headers.Authorization = `Bearer ${response.data.token}`
+//     }catch(e){
+//       toast.error('Usuário ou senha inválidos')
+//       dispatch(loginFailure())
+//     }
+//   }
+// }
 
 export const loadStateWhenStarts = () => {
   if(localStorage.getItem('loggedInState')){

@@ -2,6 +2,7 @@ import { get } from 'lodash';
 import { useEffect, useState } from "react";
 import { FaEdit, FaUserCircle, FaWindowClose } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
+import Loading from '../../components/Loading';
 
 import { IStudent } from "../../interfaces/IStudent";
 import axios from "../../services/axios";
@@ -10,11 +11,15 @@ import { ProfilePicture, StudentContainer } from "./styled";
 
 export default function Students(): JSX.Element{
   const [students, setStudents] = useState<IStudent[]>([])
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+
 
   useEffect(() => {
     async function getData(){
+      setIsLoading(true)
       const response = await axios.get('/students');
       setStudents(response.data);
+      setIsLoading(false)
     }
 
     getData()
@@ -23,6 +28,7 @@ export default function Students(): JSX.Element{
 
   return (
     <Container>
+      <Loading isLoading={isLoading}/>
       <h1>Students</h1>
 
       <StudentContainer>

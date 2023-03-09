@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { useSelector } from "react-redux/es/hooks/useSelector";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import isEmail from 'validator/es/lib/isEmail';
-import { RootState, store } from "../../store";
+import axios from "../../services/axios";
+import { store } from "../../store";
 import * as actions from '../../store/isLoggedIn.store';
 
 import { Container } from "../../styles/GlobalStyles";
@@ -15,10 +15,10 @@ export default function Login(): JSX.Element{
 
 
   const navigate = useNavigate()
-  const loginInformation = useSelector((state: RootState) => state.loggedInReducer)
-  console.log(loginInformation);
+  // const loginInformation = useSelector((state: RootState) => state.loggedInReducer)
+  // console.log(loginInformation);
   
-  function handleSubmit(e: React.FormEvent){
+  async function handleSubmit(e: React.FormEvent){
     e.preventDefault()
     
     let formErros = false;
@@ -33,12 +33,21 @@ export default function Login(): JSX.Element{
       toast.error('Senha inválida');
     }
 
-   
-   
     if(formErros) return
     
-    store.dispatch(actions.login({email, password}))
-    navigate('/')
+    try{
+      const response = await axios.post('/tokens', {email, password}, {headers: {'Content-Type': 'application/json'}})
+      store.dispatch(actions.loginSuccess(response.data))
+      toast.success('Login com sucesso')
+      
+      axios.defaults.headers.Authorization = `Bearer ${response.data.token}`
+      navigate('/')
+    }catch(e){
+      toast.error('Usuário ou senha inválidos')
+      store.dispatch(actions.loginFailure())
+    }
+    // store.dispatch(actions.login({email, password}))
+    // navigate('/')
   }
 
   return (

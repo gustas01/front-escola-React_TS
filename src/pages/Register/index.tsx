@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import isEmail from 'validator/es/lib/isEmail';
+import Loading from "../../components/Loading";
 import axios from "../../services/axios";
 import { Container } from "../../styles/GlobalStyles";
 import { Form } from "./styled";
@@ -10,6 +11,7 @@ export default function Register(): JSX.Element{
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const navigate = useNavigate()
 
@@ -41,21 +43,26 @@ export default function Register(): JSX.Element{
 
     if(formErros) return
 
+    setIsLoading(true)
+
     try{
       await axios.post('/users', {name, email, password})
    
       toast.success('Usuário cadastrado com sucesso!')
+      setIsLoading(false)
       navigate('/login')
       
     }catch(e: any){
       const errors = (e.response?.data?.errors) || [];
       errors.map((error: any) => toast.error(error))
+      setIsLoading(false)
     }
 
   }
 
   return (
     <Container>
+      <Loading isLoading={isLoading}/>
       <h1>Crie sua conta</h1>
 
       <Form onSubmit={handleSubmit}>
