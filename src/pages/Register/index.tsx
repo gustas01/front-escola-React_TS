@@ -11,6 +11,7 @@ import { Form } from "./styled";
 
 export default function Register(): JSX.Element{
   const user =  useSelector((state: RootState) => state.loggedInReducer.user)
+  const { isLoggedIn } =  useSelector((state: RootState) => state.loggedInReducer)
 
   const [name, setName] = useState(user.name);
   const [email, setEmail] = useState(user.email);
@@ -49,9 +50,11 @@ export default function Register(): JSX.Element{
     if(formErros) return
 
     setIsLoading(true)
-    store.dispatch(actions.register({name, email, password}))  
+    store.dispatch(actions.register({name, email, password, id: user.id}))  
     setIsLoading(false)
           
+    if(isLoggedIn) return 
+
     navigate('/login')
 
   }
@@ -59,7 +62,7 @@ export default function Register(): JSX.Element{
   return (
     <Container>
       <Loading isLoading={isLoading}/>
-      <h1>{user.id ? 'Editar dados' : 'Crie sua conta'}</h1>
+      <h1>{isLoggedIn ? 'Editar dados' : 'Crie sua conta'}</h1>
 
       <Form onSubmit={handleSubmit}>
         <label htmlFor="name">
@@ -77,7 +80,7 @@ export default function Register(): JSX.Element{
           <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder='Sua senha'/>
         </label>
 
-        <button type="submit">{user.id ? 'Salvar' : 'Criar conta'}</button>
+        <button type="submit">{isLoggedIn ? 'Salvar' : 'Criar conta'}</button>
       </Form>
     </Container>
   )
