@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import isEmail from 'validator/es/lib/isEmail';
-import axios from "../../services/axios";
-import { store } from "../../store";
+import Loading from "../../components/Loading";
+import { RootState, store } from "../../store";
 import * as actions from '../../store/isLoggedIn.store';
 
 import { Container } from "../../styles/GlobalStyles";
@@ -12,11 +13,10 @@ import { Form } from './styled';
 export default function Login(): JSX.Element{
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('');
-
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const navigate = useNavigate()
-  // const loginInformation = useSelector((state: RootState) => state.loggedInReducer)
-  // console.log(loginInformation);
+  const loginInformation = useSelector((state: RootState) => state.loggedInReducer)
   
   async function handleSubmit(e: React.FormEvent){
     e.preventDefault()
@@ -35,23 +35,20 @@ export default function Login(): JSX.Element{
 
     if(formErros) return
     
-    try{
-      const response = await axios.post('/tokens', {email, password}, {headers: {'Content-Type': 'application/json'}})
-      store.dispatch(actions.loginSuccess(response.data))
-      toast.success('Login com sucesso')
-      
-      axios.defaults.headers.Authorization = `Bearer ${response.data.token}`
-      navigate('/')
-    }catch(e){
-      toast.error('Usuário ou senha inválidos')
-      store.dispatch(actions.loginFailure())
-    }
-    // store.dispatch(actions.login({email, password}))
-    // navigate('/')
+    setIsLoading(true)
+    store.dispatch(actions.login({email, password}))  
+    setIsLoading(false)
   }
+
+  useEffect(() => {
+    if(loginInformation.isLoggedIn)
+      navigate('/')
+  }, [loginInformation.isLoggedIn])
+
 
   return (
     <Container>
+      <Loading isLoading={isLoading}/>
       <h1>Login</h1>
 
       <Form onSubmit={handleSubmit}>

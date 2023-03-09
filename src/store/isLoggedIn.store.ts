@@ -1,24 +1,26 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { toast } from 'react-toastify';
+import { AppDispatch, AppThunk } from '.';
 import axios from '../services/axios';
 
 
 type IState = {
   isLoggedIn: boolean,
   token: string,
-  user: {id: number, email: string},
+  user: {id: number, name: string, email: string},
   isLoading: boolean
 }
 
 type IPayloadAction = {
   token: string,
-  user: {id: number, email: string}
+  user: {id: number, name: string, email: string}
 }
 
 
 const initialState: IState = {
   isLoggedIn: false,
   token: '',
-  user: {id: 0, email: ''},
+  user: {id: 0, name: '', email: ''},
   isLoading: false
 }
 
@@ -56,20 +58,35 @@ export default loggedIn.reducer
 //disparar action de forma assíncrona
 //provavelmente vou usar algo assim para carregar dados do usuário quando ele clicar no botão de login
 //vou fazer aqui dentro o que for feito no SAGA
-// export function login(payload: {email: string, password: string}): AppThunk {
-//   return async function (dispatch: AppDispatch, getState){
-//     try{
-//       const response = await axios.post('/tokens', payload, {headers: {'Content-Type': 'application/json'}})
-//       dispatch(loginSuccess(response.data))
-//       toast.success('Login com sucesso')
+export function login(payload: {email: string, password: string}): AppThunk {
+  return async function (dispatch: AppDispatch, getState){
+    try{
+      const response = await axios.post('/tokens', payload, {headers: {'Content-Type': 'application/json'}})
+      console.log('indo chamar a action success');
       
-//       axios.defaults.headers.Authorization = `Bearer ${response.data.token}`
-//     }catch(e){
-//       toast.error('Usuário ou senha inválidos')
-//       dispatch(loginFailure())
-//     }
-//   }
-// }
+      dispatch(loginSuccess(response.data))
+      toast.success('Login com sucesso')
+      
+      axios.defaults.headers.Authorization = `Bearer ${response.data.token}`
+    }catch(e){
+      toast.error('Usuário ou senha inválidos')
+      dispatch(loginFailure())
+    }
+  }
+}
+
+
+export function register(payload: {name: string, email: string, password: string}) : AppThunk {
+  return async function (dispatch: AppDispatch, getState){
+    try{
+      await axios.post('/users', payload)
+      toast.success('Usuário cadastrado com sucesso!')
+    }catch(e: any){
+      const errors = (e.response?.data?.errors) || [];
+      errors.map((error: any) => toast.error(error))
+    }
+  }
+}
 
 export const loadStateWhenStarts = () => {
   if(localStorage.getItem('loggedInState')){
