@@ -52,6 +52,7 @@ export const loggedIn = createSlice({
       delete axios.defaults.headers.Authorization;
       return initialState
     },
+    
     updateSuccess(state, action: PayloadAction<IPayloadRegister>){
       state.user = action.payload
       localStorage.setItem('loggedInState', JSON.stringify(state))
