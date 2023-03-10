@@ -1,7 +1,7 @@
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 type Props = {}
-
 
 export const StudentContainer = styled.div <Props>`
   margin-top: 20px;
@@ -27,3 +27,9 @@ export const ProfilePicture = styled.div <Props>`
      
   }
 `;
+
+
+export const NewStudentLink = styled(Link)`
+  display: block;
+  padding: 20px 0 10px 0;
+`

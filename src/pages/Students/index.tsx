@@ -8,7 +8,7 @@ import Loading from '../../components/Loading';
 import { IStudent } from "../../interfaces/IStudent";
 import axios from "../../services/axios";
 import { Container } from "../../styles/GlobalStyles";
-import { ProfilePicture, StudentContainer } from "./styled";
+import { NewStudentLink, ProfilePicture, StudentContainer } from "./styled";
 
 export default function Students(): JSX.Element{
   const [students, setStudents] = useState<IStudent[]>([])
@@ -49,6 +49,8 @@ export default function Students(): JSX.Element{
     <Container>
       <Loading isLoading={isLoading}/>
       <h1>Students</h1>
+
+    <NewStudentLink to='/student'>Novo aluno</NewStudentLink>
 
       <StudentContainer>
         {students.map((student, index) => (
