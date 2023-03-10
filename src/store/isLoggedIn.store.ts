@@ -47,7 +47,7 @@ export const loggedIn = createSlice({
       return state
     }, 
 
-    loginFailure(){
+    logout(){
       localStorage.setItem('loggedInState', JSON.stringify(initialState))
       delete axios.defaults.headers.Authorization;
       return initialState
@@ -61,7 +61,7 @@ export const loggedIn = createSlice({
 })
 
 
-export const { loginRequest, loginSuccess, loginFailure, updateSuccess } = loggedIn.actions
+export const { loginRequest, loginSuccess, logout, updateSuccess } = loggedIn.actions
 export default loggedIn.reducer
 
 
@@ -79,7 +79,6 @@ export function login(payload: {email: string, password: string}): AppThunk {
       axios.defaults.headers.Authorization = `Bearer ${response.data.token}`
     }catch(e){
       toast.error('Usuário ou senha inválidos')
-      dispatch(loginFailure())
     }
   }
 }
