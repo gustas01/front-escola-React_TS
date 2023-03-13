@@ -96,8 +96,7 @@ export function register(payload: {id: number, name: string, email: string, pass
       else{
         await axios.put('/users', {name, email, password})
         if(email !== getState().loggedInReducer.user.email){
-          // chamar action de deslogar
-          console.log(getState().loggedInReducer.user.email);
+          dispatch(logout())
         }
         dispatch(updateSuccess({id, name, email}))
         
@@ -105,7 +104,7 @@ export function register(payload: {id: number, name: string, email: string, pass
       }
     }catch(e: any){
       if(e.response.status === 401){
-        // chamar action de deslogar
+        dispatch(logout())
       }
       const errors = (e.response?.data?.errors) || [];
       errors.map((error: any) => toast.error(error))

@@ -22,8 +22,6 @@ export default function Student(): JSX.Element{
   const [height, setHeight] = useState('')
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [photo, setPhoto] = useState<string>('')
-
-  console.log(id);
   
   useEffect(() => {
     if(!id) return
