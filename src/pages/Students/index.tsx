@@ -65,8 +65,10 @@ export default function Students(): JSX.Element{
             <span>{student.first_name}</span>
             <span>{student.email}</span>
 
-            <Link to={`student/${student.id}/edit`}> <FaEdit size={16}/> </Link>
-            <Link to={`student/${student.id}/delete`} onClick={e => handleDelete(e, student.id, index)}> <FaWindowClose size={16}/> </Link>
+              <span style={{display: 'flex', gap: '10px'}}>
+                <Link to={`student/${student.id}/edit`}> <FaEdit size={16}/> </Link>
+                <Link to={`student/${student.id}/delete`} onClick={e => handleDelete(e, student.id, index)}> <FaWindowClose size={16}/> </Link>
+              </span>
           </div>
         ))}
       </StudentContainer>
