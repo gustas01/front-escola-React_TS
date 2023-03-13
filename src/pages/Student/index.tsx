@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from "react-router-dom";
+import { FaEdit, FaUserCircle } from 'react-icons/fa';
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from 'react-toastify';
 import validator from 'validator';
 import Loading from '../../components/Loading';
@@ -8,7 +9,7 @@ import axios from '../../services/axios';
 import { store } from '../../store';
 import * as actions from '../../store/isLoggedIn.store';
 import { Container } from "../../styles/GlobalStyles";
-import { Form } from './styled';
+import { Form, ProfilePicture, Title } from './styled';
 
 export default function Student(): JSX.Element{
   const {id} = useParams()
@@ -20,8 +21,10 @@ export default function Student(): JSX.Element{
   const [weight, setWeight] = useState('')
   const [height, setHeight] = useState('')
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [photo, setPhoto] = useState<string>('')
 
-
+  console.log(id);
+  
   useEffect(() => {
     if(!id) return
 
@@ -29,7 +32,7 @@ export default function Student(): JSX.Element{
       try{
         setIsLoading(true)
         const data  = await (await axios.get(`/students/${id}`)).data as IStudent 
-        const PhotoURL = data?.photos[0]?.url 
+        setPhoto(data?.photos[0]?.url)
         
         setFirst_name(data.first_name)
         setLast_name(data.last_name)
@@ -106,16 +109,17 @@ export default function Student(): JSX.Element{
 
         toast.success('Aluno editado com sucesso')
       } else {
-        await axios.post(`/students/`, {
-          first_name, 
+        const data = await (await axios.post(`/students/`, {
+          first_name,
           last_name,
           email,
           age,
           weight,
           height
-        })
+        })).data as IStudent
   
         toast.success('Aluno criado com sucesso')
+        navigate(`${data.id}/edit`)
       }
       setIsLoading(false)
     }catch(err: any){
@@ -135,8 +139,17 @@ export default function Student(): JSX.Element{
   return (
     <Container>
       <Loading isLoading={isLoading}/>
-      <h1>{id ? 'Editar aluno' : 'Novo aluno'}</h1>
 
+      <Title>{id ? 'Editar aluno' : 'Novo aluno'}</Title>
+
+      {id && (
+        <ProfilePicture>
+          { photo ? <img src={photo} alt={first_name} /> : <FaUserCircle size={180}/> }
+          <Link to={`/photos/${id}`}> 
+            <FaEdit size={24}/>
+          </Link>
+        </ProfilePicture>
+      )}
       <Form onSubmit={handleSubmit}>
         <input type="text" value={first_name} onChange={e => setFirst_name(e.target.value)} placeholder='Primeiro nome'/>
         <input type="text" value={last_name} onChange={e => setLast_name(e.target.value)} placeholder='Sobrenome'/>
